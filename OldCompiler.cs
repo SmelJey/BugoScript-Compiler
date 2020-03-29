@@ -4,8 +4,13 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace JetbrainsInternship {
-    class Program {
+namespace Compiler {
+    /// <summary>
+    /// Compiles mathematical expressions with three in-built variables x, y, z. Can search for external static functions and variables
+    /// </summary>
+    public sealed class OldCompiler {
+        delegate long CompileResult(long x, long y, long z);
+
         private static long testField = 5;
         public static long testField2 = 8;
 
@@ -20,8 +25,6 @@ namespace JetbrainsInternship {
         public static int Uno() {
             return 1;
         }
-
-        delegate long CompileResult(long x, long y, long z);
 
         enum TokenType {
             Variable,

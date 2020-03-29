@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Compile2 {
+namespace Compiler {
     public sealed class Compiler {
         public delegate long CompileResult();
         public delegate long ILProgram();
@@ -40,9 +40,9 @@ namespace Compile2 {
         }
 
         /// <summary>
-        /// State of compilator's state machine
+        /// State of compiler's state machine
         /// </summary>
-        private enum CompilatorState {
+        private enum CompilerState {
             /// <summary> Block just started </summary>
             BlockBegin,
             /// <summary> Block name received, needs open bracket </summary>
@@ -55,7 +55,7 @@ namespace Compile2 {
             Err
         }
 
-        /// <summary> Compilator's lexemes </summary>
+        /// <summary> Compiler's lexemes </summary>
         private enum LexemeType {
             BracketsOpen,
             BracketsClose,
@@ -110,47 +110,47 @@ namespace Compile2 {
         };
 
         /// <summary>
-        /// Compilator's state transitions
+        /// Compiler's state transitions
         /// </summary>
-        private static readonly CompilatorState[][] compilationMachine = new CompilatorState[][] {
-            // CompilatorState.BlockBegin
-            new CompilatorState[] {
-                CompilatorState.Err, CompilatorState.BlockBegin,
-                CompilatorState.NeedsBlockOpen, CompilatorState.NeedsAssign,
-                CompilatorState.BlockBegin, CompilatorState.Err,
-                CompilatorState.NeedsExpression, CompilatorState.NeedsExpression,
+        private static readonly CompilerState[][] compilationMachine = new CompilerState[][] {
+            // CompilerState.BlockBegin
+            new CompilerState[] {
+                CompilerState.Err, CompilerState.BlockBegin,
+                CompilerState.NeedsBlockOpen, CompilerState.NeedsAssign,
+                CompilerState.BlockBegin, CompilerState.Err,
+                CompilerState.NeedsExpression, CompilerState.NeedsExpression,
             },
 
-            // CompilatorState.NeedBlockOpen
-            new CompilatorState[] {
-                CompilatorState.BlockBegin, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.Err
+            // CompilerState.NeedBlockOpen
+            new CompilerState[] {
+                CompilerState.BlockBegin, CompilerState.Err,
+                CompilerState.Err, CompilerState.Err,
+                CompilerState.Err, CompilerState.Err,
+                CompilerState.Err, CompilerState.Err
             },
 
-            // CompilatorState.NeedsAssign
-            new CompilatorState[] {
-                CompilatorState.Err, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.NeedsExpression,
-                CompilatorState.Err, CompilatorState.Err
+            // CompilerState.NeedsAssign
+            new CompilerState[] {
+                CompilerState.Err, CompilerState.Err,
+                CompilerState.Err, CompilerState.Err,
+                CompilerState.Err, CompilerState.NeedsExpression,
+                CompilerState.Err, CompilerState.Err
             },
 
-            // CompilatorState.NeedsExpression
-            new CompilatorState[] {
-                CompilatorState.Err, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.NeedsExpression,
-                CompilatorState.BlockBegin, CompilatorState.Err,
-                CompilatorState.NeedsExpression, CompilatorState.Err
+            // CompilerState.NeedsExpression
+            new CompilerState[] {
+                CompilerState.Err, CompilerState.Err,
+                CompilerState.Err, CompilerState.NeedsExpression,
+                CompilerState.BlockBegin, CompilerState.Err,
+                CompilerState.NeedsExpression, CompilerState.Err
             },
 
-            // CompilatorState.Err
-            new CompilatorState[] {
-                CompilatorState.Err, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.Err,
-                CompilatorState.Err, CompilatorState.Err
+            // CompilerState.Err
+            new CompilerState[] {
+                CompilerState.Err, CompilerState.Err,
+                CompilerState.Err, CompilerState.Err,
+                CompilerState.Err, CompilerState.Err,
+                CompilerState.Err, CompilerState.Err
             }
         };
 
@@ -640,7 +640,7 @@ namespace Compile2 {
                 return program.CreateDelegate(typeof(ILProgram)) as ILProgram;
             }
 
-            var curState = CompilatorState.BlockBegin;
+            var curState = CompilerState.BlockBegin;
 
             var blockStack = new Stack<string>();
 
@@ -661,7 +661,7 @@ namespace Compile2 {
 
             for (int i = 0; i < tokens.Count; i++) {
                 // Process expression for variable assignment / function call
-                if (curState == CompilatorState.NeedsExpression || isIfExpression) {
+                if (curState == CompilerState.NeedsExpression || isIfExpression) {
                     while (i < tokens.Count && ((!isIfExpression && tokens[i] != ";") || (isIfExpression && tokens[i] != "{"))) {
                         i++;
                     }
@@ -813,7 +813,7 @@ namespace Compile2 {
                 // Compilator state machine transition
                 curState = compilationMachine[(int)curState][(int)lexemeType];
 
-                if (curState == CompilatorState.Err) {
+                if (curState == CompilerState.Err) {
                     throw new Exception("Something goes wrong");
                 }
             }

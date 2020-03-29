@@ -1,7 +1,7 @@
 ﻿using System;
-using static Compile2.Compiler;
+using static Compiler.Compiler;
 
-namespace Compile2 {
+namespace Compiler {
     public class Tester {
         private static long testField = 5;
         public static long testField2 = 8;
@@ -96,7 +96,7 @@ namespace Compile2 {
         }
 
         
-        public static void CompilatorTest() {
+        public static void CompilerTest() {
             var simpleTest = Compile("declare { a = 2;} program { return a; }");
             TestAssert(simpleTest.Invoke() == 2);
 
@@ -190,7 +190,7 @@ namespace Compile2 {
 
             var boolTest1 = Compile(
                 "program {" +
-                "   if (1 == 1) {" +
+                "   if 1 == 1 {" +
                 "       return 1;" +
                 "   } else {" +
                 "       return 0;" +
@@ -219,7 +219,7 @@ namespace Compile2 {
             TestAssert(boolTest3.Invoke() == 1);
         }
 
-        public static void ExceptionCompilatorTest() {
+        public static void ExceptionCompilerTest() {
             ThrowAssert(CompileSingle, "))testField(("); // Incorrect brackets
             ThrowAssert(CompileSingle, "Mul(2, 1"); // Incorrect brackets
             ThrowAssert(CompileSingle, "2 +"); // Incorrect expression
@@ -329,8 +329,8 @@ namespace Compile2 {
 
         public static void Main() {
             Tester.CompileExpressionTest();
-            Tester.CompilatorTest();
-            Tester.ExceptionCompilatorTest();
+            Tester.CompilerTest();
+            Tester.ExceptionCompilerTest();
         }
     }
 }
