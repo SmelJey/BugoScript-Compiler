@@ -24,3 +24,9 @@ Control blocks:
 + `!<bool>` - returns `<bool>`
 + `-<long>` - returns `<long>`
 + `<variable> = <expression>;` - special assignment operator.
+
+---
+
+All questions can be asked here: 
+
+Telegram: @SmelJey
